@@ -73,36 +73,48 @@ export default function TaskCreationWizard() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-gradient-to-br from-secondary to-primary rounded-xl shadow-2xl border border-accent/20">
-      <h2 className="text-2xl font-bold text-highlight mb-6">إنشاء مهمة جديدة</h2>
+    <div className="w-full max-w-2xl mx-auto p-8 glass-strong rounded-2xl shadow-glow border border-white/10 animate-fade-scale">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow animate-float">
+          <span className="text-2xl">✨</span>
+        </div>
+        <div>
+          <h2 className="text-xl font-bold gradient-text">إنشاء مهمة جديدة</h2>
+          <p className="text-xs text-gray-500">حول فكرتك إلى كود</p>
+        </div>
+      </div>
 
-      <div className="mb-6 flex justify-between">
+      <div className="mb-8 flex items-center gap-2">
         {[1, 2, 3].map((s) => (
-          <div
-            key={s}
-            className={`flex-1 h-2 mx-1 rounded-full transition ${
-              s <= step ? 'bg-highlight' : 'bg-primary/50'
-            }`}
-          />
+          <div key={s} className="flex-1 flex items-center gap-2">
+            <div className={`flex-1 h-2 rounded-full transition-all duration-300 ${
+              s <= step ? 'bg-gradient-primary shadow-glow-sm' : 'glass'
+            }`} />
+            {s < 3 && <span className="text-gray-600">•</span>}
+          </div>
         ))}
       </div>
 
       <div className="min-h-64 mb-6">
         {step === 1 && (
           <div className="space-y-4 animate-fade-scale">
-            <label className="block">
-              <span className="block text-sm font-semibold text-highlight mb-2">
+            <label className="block group">
+              <span className="block text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
+                <span>📝</span>
                 وصف المهمة
               </span>
-              <textarea
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="صف المهمة التي تريد تنفيذها..."
-                rows={5}
-                className="w-full px-4 py-3 bg-primary/50 text-white placeholder-gray-500 border border-accent/50 rounded-lg focus:outline-none focus:border-highlight focus:ring-2 focus:ring-highlight/50 transition"
-              />
+              <div className="relative">
+                <textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  placeholder="مثال: إنشاء REST API لإدارة المهام مع CRUD operations؛ استخدم FastAPI وSQLite..."
+                  rows={5}
+                  className="w-full px-5 py-4 glass text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 transition-all duration-200 resize-none"
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none" />
+              </div>
             </label>
           </div>
         )}
@@ -110,22 +122,24 @@ export default function TaskCreationWizard() {
         {step === 2 && (
           <div className="space-y-4 animate-fade-scale">
             <div className="grid grid-cols-2 gap-4">
-              <label className="block">
-                <span className="block text-sm font-semibold text-highlight mb-2">
+              <label className="block group">
+                <span className="block text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
+                  <span>💻</span>
                   لغة البرمجة
                 </span>
-                <select
-                  value={formData.language}
-                  onChange={(e) => {
-                    const lang = e.target.value
-                    setFormData({
-                      ...formData,
-                      language: lang,
-                      framework: frameworks[lang as keyof typeof frameworks][0],
-                    })
-                  }}
-                  className="w-full px-4 py-3 bg-primary/50 text-white border border-accent/50 rounded-lg focus:outline-none focus:border-highlight"
-                >
+                <div className="relative">
+                  <select
+                    value={formData.language}
+                    onChange={(e) => {
+                      const lang = e.target.value
+                      setFormData({
+                        ...formData,
+                        language: lang,
+                        framework: frameworks[lang as keyof typeof frameworks][0],
+                      })
+                    }}
+                    className="w-full px-5 py-4 glass text-white border border-white/10 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 transition-all duration-200 appearance-none cursor-pointer"
+                  >
                   {languages.map((lang) => (
                     <option key={lang} value={lang}>
                       {lang}
@@ -134,17 +148,19 @@ export default function TaskCreationWizard() {
                 </select>
               </label>
 
-              <label className="block">
-                <span className="block text-sm font-semibold text-highlight mb-2">
+              <label className="block group">
+                <span className="block text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
+                  <span>🛠️</span>
                   إطار العمل
                 </span>
-                <select
-                  value={formData.framework}
-                  onChange={(e) =>
-                    setFormData({ ...formData, framework: e.target.value })
-                  }
-                  className="w-full px-4 py-3 bg-primary/50 text-white border border-accent/50 rounded-lg focus:outline-none focus:border-highlight"
-                >
+                <div className="relative">
+                  <select
+                    value={formData.framework}
+                    onChange={(e) =>
+                      setFormData({ ...formData, framework: e.target.value })
+                    }
+                    className="w-full px-5 py-4 glass text-white border border-white/10 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 transition-all duration-200 appearance-none cursor-pointer"
+                  >
                   {frameworks[formData.language as keyof typeof frameworks].map(
                     (fw) => (
                       <option key={fw} value={fw}>
@@ -161,7 +177,8 @@ export default function TaskCreationWizard() {
         {step === 3 && (
           <div className="space-y-4 animate-fade-scale">
             <label className="block">
-              <span className="block text-sm font-semibold text-highlight mb-2">
+              <span className="block text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
+                <span>🎯</span>
                 مستوى التعقيد
               </span>
               <div className="flex gap-3">
@@ -171,12 +188,13 @@ export default function TaskCreationWizard() {
                     onClick={() =>
                       setFormData({ ...formData, complexity: level })
                     }
-                    className={`flex-1 py-3 rounded-lg font-semibold transition ${
+                    className={`flex-1 py-4 rounded-xl font-semibold transition-all duration-200 relative overflow-hidden group ${
                       formData.complexity === level
-                        ? 'bg-highlight text-primary'
-                        : 'bg-primary/50 text-gray-400 hover:border-highlight border border-transparent'
+                        ? 'glass-strong border-primary-500 shadow-glow-sm text-primary-300'
+                        : 'glass border-white/10 text-gray-400 hover:border-primary-500/30'
                     }`}
                   >
+                    <span className="relative z-10">
                     {level === 'low' && 'منخفض'}
                     {level === 'medium' && 'متوسط'}
                     {level === 'high' && 'عالي'}
@@ -185,10 +203,11 @@ export default function TaskCreationWizard() {
               </div>
             </label>
 
-            <div className="p-4 bg-primary/30 rounded-lg border border-accent/30">
-              <p className="text-sm text-gray-300 mb-2">
-                <strong>الملخص:</strong>
-              </p>
+            <div className="p-5 glass rounded-xl border border-white/10 animate-slide-in">
+              <div className="flex items-center gap-2 mb-3">
+                <span>📋</span>
+                <p className="text-sm font-semibold text-primary-300">ملخص المهمة</p>
+              </div>
               <p className="text-gray-400 text-sm">
                 اللغة: <span className="text-highlight">{formData.language}</span>
               </p>
@@ -212,25 +231,45 @@ export default function TaskCreationWizard() {
         {step > 1 && (
           <button
             onClick={() => setStep(step - 1)}
-            className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition"
+            className="flex-1 py-4 glass border border-white/10 text-white font-semibold rounded-xl hover:border-primary-500/30 transition-all duration-200 hover-lift"
           >
-            السابق
+            <span className="flex items-center justify-center gap-2">
+              <span>←</span>
+              السابق
+            </span>
           </button>
         )}
         {step < 3 ? (
           <button
             onClick={handleNext}
-            className="flex-1 py-3 bg-gradient-to-r from-highlight to-error text-white font-semibold rounded-lg hover:shadow-lg transition"
+            className="flex-1 py-4 bg-gradient-primary text-white font-semibold rounded-xl hover:shadow-glow-lg transition-all duration-200 relative overflow-hidden group"
           >
-            التالي
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              التالي
+              <span>→</span>
+            </span>
+            <div className="absolute inset-0 bg-gradient-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         ) : (
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="flex-1 py-3 bg-gradient-to-r from-success to-highlight text-primary font-semibold rounded-lg hover:shadow-lg transition disabled:opacity-50"
+            className="flex-1 py-4 bg-gradient-primary text-white font-semibold rounded-xl hover:shadow-glow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
           >
-            {isLoading ? 'جاري الإرسال...' : 'بدء المهمة'}
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              {isLoading ? (
+                <>
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  جاري الإرسال...
+                </>
+              ) : (
+                <>
+                  <span>🚀</span>
+                  بدء المهمة
+                </>
+              )}
+            </span>
+            <div className="absolute inset-0 bg-gradient-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         )}
       </div>
