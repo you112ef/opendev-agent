@@ -1,0 +1,27 @@
+{
+  "$schema": "https://railway.app/schema/v1.0",
+  "services": [
+    {
+      "name": "opendev-agent-backend",
+      "dockerfile": "./backend/Dockerfile",
+      "rootDirectory": "./backend",
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "python main.py",
+      "variables": {
+        "PORT": "8000",
+        "HOST": "0.0.0.0"
+      }
+    },
+    {
+      "name": "opendev-agent-frontend",
+      "dockerfile": "./frontend/Dockerfile",
+      "rootDirectory": "./frontend",
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "npm run start",
+      "variables": {
+        "PORT": "3000",
+        "NEXT_PUBLIC_API_URL": "${{ services.opendev-agent-backend.url }}"
+      }
+    }
+  ]
+}
