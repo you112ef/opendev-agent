@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+.next/
+out/
+*.pyc
+.pytest_cache/
+.coverage
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+.docker/

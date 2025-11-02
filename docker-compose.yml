@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - opendev-network
+    volumes:
+      - ./frontend:/app
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+    depends_on:
+      - redis
+    networks:
+      - opendev-network
+    volumes:
+      - ./backend:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - opendev-network
+    volumes:
+      - redis-data:/data
+
+  sandbox-builder:
+    build:
+      context: ./sandbox
+      dockerfile: Dockerfile.build
+    networks:
+      - opendev-network
+    volumes:
+      - sandbox-cache:/cache
+
+networks:
+  opendev-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  sandbox-cache:

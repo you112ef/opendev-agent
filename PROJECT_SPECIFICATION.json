@@ -1,0 +1,360 @@
+{
+  "project": {
+    "name": "OpenDevAgent_KiloInspired_Architecture",
+    "version": "0.1.0",
+    "description": "منصة مهندس البرمجيات المتقدمة بالذكاء الاصطناعي تعمل وفق حلقة عمل Plan-Act-Observe-Fix مستوحاة من معمارية Kilo Code",
+    "repository": "https://github.com/yourusername/OpenDevAgent_Platform",
+    "license": "MIT"
+  },
+  "architecture": {
+    "pattern": "Plan-Act-Observe-Fix",
+    "inspiration": "Kilo Code",
+    "agentSystem": "Multi-Agent with Specialized Roles"
+  },
+  "mandates": [
+    "يجب أن يُبنى المنسق كوكلاء متعددين (Multi-Agent System) بأدوار متخصصة (معمار، مبرمج، مصحح)",
+    "يجب تجهيز منفذ التنفيذ الآمن (Sandbox Executor) بإمكانية الوصول للطرفية",
+    "جميع تفاعلات نماذج اللغة الكبيرة يجب أن تمر عبر OpenRouter API",
+    "ينبغي أن يحتوي المخرج بصيغة JSON على التكوين التفصيلي المطلوب"
+  ],
+  "frontend": {
+    "stack": {
+      "framework": "Next.js 14",
+      "library": "React 18",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "packageManager": "npm"
+    },
+    "design": {
+      "inspiration": "capy.ai",
+      "responsive": true,
+      "supportedPlatforms": ["Desktop", "Tablet", "Mobile (Android compatible)"],
+      "direction": "RTL (Arabic)",
+      "theme": "Dark Modern with Gradient Accents"
+    },
+    "components": [
+      {
+        "name": "ApiKeyInputForm",
+        "description": "نافذة منبثقة آمنة لإدخال مفتاح OpenRouter API مع التحقق من الصلاحية",
+        "features": [
+          "Show/Hide Password Toggle",
+          "Real-time Validation",
+          "Secure HTTPS Transfer",
+          "Error Feedback"
+        ]
+      },
+      {
+        "name": "TaskCreationWizard",
+        "description": "معالج متعدد الخطوات لإدخال وصف المهمة واختيار لغة البرمجة وإطار العمل",
+        "steps": ["Task Description", "Language & Framework Selection", "Complexity Level"],
+        "features": ["Step Progress", "Form Validation", "Preview"]
+      },
+      {
+        "name": "AgentStatusDashboard",
+        "description": "لوحة عرض تقدم كل وكيل (التخطيط، البرمجة، التصحيح) مع شريط تقدم",
+        "displays": ["Agent Status", "Progress Percentage", "Real-time Updates"]
+      },
+      {
+        "name": "RealTimeLogViewer",
+        "description": "عرض مباشر لتدفق سجلات الوكلاء والتقارير الخاصة بالمهام",
+        "features": ["Live Streaming", "Auto-scroll", "Log Filtering"]
+      },
+      {
+        "name": "NotificationSystem",
+        "description": "نظام إشعارات مرئي للأخطاء والنجاحات والتحذيرات",
+        "types": ["Success", "Error", "Warning", "Info"],
+        "features": ["Auto-dismiss", "Custom Duration", "Stack Management"]
+      }
+    ],
+    "security": {
+      "api_key_handling": "ينقل مفتاح OpenRouter API عبر HTTPS إلى الخادم، ويخزن في الذاكرة مؤقتًا فقط بدون حفظ دائم",
+      "session_management": "إدارة آمنة لجلسات المستخدم وتنظيف البيانات الحساسة عند إنهاء الجلسة",
+      "csrf_protection": true,
+      "xss_prevention": true
+    },
+    "deployment": {
+      "port": 3000,
+      "environment": "development/production",
+      "containerization": "Docker"
+    }
+  },
+  "backend": {
+    "stack": {
+      "framework": "FastAPI",
+      "language": "Python 3.11+",
+      "packageManager": "pip"
+    },
+    "description": "الوحدة الذكية الأساسية التي تنسق حلقة Plan-Act-Observe-Fix باستخدام وكلاء متخصصين",
+    "deployment": {
+      "port": 8000,
+      "host": "0.0.0.0",
+      "containerization": "Docker"
+    },
+    "agents": {
+      "Architect_Agent": {
+        "model": "openai/gpt-4o",
+        "role": "وكيل التخطيط المعماري عالي المستوى",
+        "responsibilities": [
+          "تحليل المتطلبات",
+          "تصميم البنية المعمارية",
+          "توصيات التكنولوجيا",
+          "خطط الحل الشاملة"
+        ],
+        "maxTokens": 2000,
+        "temperature": 0.7
+      },
+      "Coder_Agent": {
+        "model": "mistral/codestral-22b",
+        "role": "وكيل توليد وتعديل الكود",
+        "responsibilities": [
+          "كتابة كود إنتاجي",
+          "تطبيق أفضل الممارسات",
+          "توثيق الكود",
+          "معالجة الأخطاء"
+        ],
+        "maxTokens": 4000,
+        "temperature": 0.5
+      },
+      "Debugger_Agent": {
+        "model": "anthropic/claude-3-5-sonnet",
+        "role": "وكيل تحليل نتائج التنفيذ وتصحيح الأخطاء",
+        "responsibilities": [
+          "مراجعة الكود",
+          "تحديد المشاكل",
+          "توصيات الأمان",
+          "اختبار الحل"
+        ],
+        "maxTokens": 2000,
+        "temperature": 0.6
+      },
+      "Fallback_Model": "meta-llama/llama-3.1-70b"
+    },
+    "api_endpoints": [
+      {
+        "method": "POST",
+        "path": "/api/submit-task",
+        "description": "استقبال تفاصيل المهمة ومفتاح OpenRouter API",
+        "request": {
+          "api_key": "string",
+          "description": "string",
+          "language": "string",
+          "framework": "string",
+          "complexity": "low|medium|high"
+        },
+        "response": {
+          "task_id": "string",
+          "status": "pending|running|completed|error",
+          "message": "string"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/task_status/{task_id}",
+        "description": "عرض حالة المهمة والسجلات تحديثاً",
+        "response": {
+          "task_id": "string",
+          "status": "string",
+          "agents": "array",
+          "logs": "array"
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/validate-key",
+        "description": "التحقق من صحة مفتاح OpenRouter API",
+        "request": {
+          "api_key": "string"
+        },
+        "response": {
+          "valid": "boolean",
+          "message": "string"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "description": "فحص صحة الخادم",
+        "response": {
+          "status": "healthy|unhealthy",
+          "version": "string",
+          "tasks_active": "number"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/task_logs/{task_id}",
+        "description": "الحصول على السجلات المفصلة لمهمة محددة",
+        "response": {
+          "logs": "array[string]"
+        }
+      }
+    ],
+    "llm_configuration": {
+      "provider": "OpenRouter API",
+      "base_url": "https://openrouter.ai/api/v1",
+      "authentication": "Bearer Token",
+      "key_handling": "تهيئة عميل OpenAI مع المفتاح لكل طلب بطريقة آمنة",
+      "fallback_enabled": true,
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_factor": 2
+      }
+    }
+  },
+  "sandbox": {
+    "stack": "Docker Containers",
+    "configuration": {
+      "isolation_technique": "حاوية جديدة معزولة لكل مهمة",
+      "resource_limits": {
+        "cpu": "1 Core",
+        "memory": "512MB",
+        "timeout_seconds": 300
+      },
+      "network_access": "معطّل - عدم وجود وصول للشبكة",
+      "filesystem": "معزول - وصول قراءة/كتابة محدود",
+      "core_tools": [
+        "عمليات قراءة وكتابة ملفات سياق المشروع",
+        "تنفيذ أوامر الطرفية الخاصة بالبناء والاختبار (npm install, pytest, etc.)",
+        "تسجيل المخرجات والأخطاء",
+        "قياس استهلاك الموارد"
+      ]
+    },
+    "supported_languages": [
+      "Python",
+      "JavaScript/TypeScript",
+      "Java",
+      "Go",
+      "Rust",
+      "C++"
+    ],
+    "execution_workflow": [
+      "استلام الكود من وكيل Coder",
+      "إنشاء حاوية Docker معزولة",
+      "تنفيذ الكود داخل الحاوية",
+      "تشغيل أوامر الطرفية المطلوبة (npm install, pytest, etc.)",
+      "جمع المخرجات وسجلات الخطأ",
+      "إرسال النتائج لوكيل Debugger للتوجيه أو الإصلاح",
+      "حلقة تكرارية حتى إتمام المهمة"
+    ]
+  },
+  "database": {
+    "type": "Redis",
+    "purpose": "Task State Caching & Session Management",
+    "host": "redis",
+    "port": 6379,
+    "ttl": 3600
+  },
+  "real_world_files_required": [
+    "docker-compose.yml",
+    "frontend/components/ApiKeyInputForm.tsx",
+    "frontend/components/TaskCreationWizard.tsx",
+    "frontend/components/AgentStatusDashboard.tsx",
+    "frontend/components/RealTimeLogViewer.tsx",
+    "frontend/components/NotificationSystem.tsx",
+    "frontend/lib/store.ts",
+    "frontend/lib/api.ts",
+    "frontend/pages/index.tsx",
+    "backend/main.py",
+    "backend/agent_logic/orchestrator.py",
+    "backend/agent_logic/models.py",
+    "backend/agent_logic/tools/sandbox_executor.py",
+    "sandbox/Dockerfile.python",
+    "config/config.json",
+    "README.md",
+    "ARCHITECTURE.md",
+    "DEPLOYMENT.md"
+  ],
+  "workflow": {
+    "phase_1_plan": {
+      "agent": "Architect",
+      "description": "التخطيط المعماري",
+      "inputs": ["Task Description", "Language", "Framework", "Complexity"],
+      "outputs": ["Architecture Plan", "Component Design", "Technology Recommendations"]
+    },
+    "phase_2_act": {
+      "agent": "Coder",
+      "description": "توليد الكود",
+      "inputs": ["Architecture Plan"],
+      "outputs": ["Production-ready Code", "Configuration Files", "Documentation"]
+    },
+    "phase_3_observe": {
+      "executor": "Sandbox",
+      "description": "تنفيذ وملاحظة",
+      "inputs": ["Generated Code"],
+      "outputs": ["Execution Results", "Error Logs", "Performance Metrics"]
+    },
+    "phase_4_fix": {
+      "agent": "Debugger",
+      "description": "التحليل والإصلاح",
+      "inputs": ["Execution Results"],
+      "outputs": ["Code Review", "Issue Analysis", "Recommendations"]
+    }
+  },
+  "design_specifications": {
+    "inspiration": "capy.ai",
+    "style": "Android-compatible modern design",
+    "colors": {
+      "primary": "#1A1A2E",
+      "secondary": "#16213E",
+      "accent": "#0F3460",
+      "highlight": "#E94560",
+      "success": "#00D9FF",
+      "warning": "#FFB703",
+      "error": "#E63946"
+    },
+    "typography": {
+      "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto",
+      "direction": "RTL (Arabic Support)"
+    },
+    "animations": [
+      "Smooth Transitions",
+      "Fade In/Out Effects",
+      "Scale Animations",
+      "Pulse Glow Effects"
+    ],
+    "responsive": {
+      "mobile": "320px - 768px",
+      "tablet": "768px - 1024px",
+      "desktop": "1024px+"
+    }
+  },
+  "performance_targets": {
+    "frontend_load_time": "< 3 seconds",
+    "api_response_time": "< 500ms",
+    "task_execution_time": "< 5 minutes",
+    "real_time_update_interval": "2 seconds"
+  },
+  "security_features": {
+    "api_key_protection": "Memory-only storage, no persistence",
+    "https_only": true,
+    "csrf_protection": true,
+    "xss_prevention": true,
+    "sql_injection_prevention": true,
+    "rate_limiting": true,
+    "sandbox_isolation": true,
+    "network_isolation": true
+  },
+  "monitoring_and_logging": {
+    "frontend": ["User Actions", "Errors", "Performance Metrics"],
+    "backend": ["Request Logs", "Task Execution", "API Calls", "Errors"],
+    "sandbox": ["Code Output", "Resource Usage", "Exit Codes"],
+    "aggregation": "Centralized Logging via ELK Stack (optional)"
+  },
+  "status": "✅ Prototype Ready for Development",
+  "last_updated": "2024-11-02",
+  "deployment_checklist": [
+    "Backend Setup (Python + FastAPI)",
+    "Frontend Setup (Next.js + React)",
+    "Docker Configuration",
+    "Redis Integration",
+    "OpenRouter API Integration",
+    "API Endpoints Testing",
+    "UI Components Implementation",
+    "Real-time Updates Setup",
+    "Sandbox Executor Implementation",
+    "Security Testing",
+    "Performance Optimization",
+    "Documentation Completion"
+  ]
+}

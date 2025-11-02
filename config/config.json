@@ -1,0 +1,73 @@
+{
+  "app": {
+    "name": "OpenDevAgent Platform",
+    "version": "0.1.0",
+    "description": "Advanced AI-powered Software Engineering Platform"
+  },
+  "frontend": {
+    "port": 3000,
+    "baseUrl": "http://localhost:3000",
+    "apiUrl": "http://localhost:8000"
+  },
+  "backend": {
+    "port": 8000,
+    "host": "0.0.0.0",
+    "logLevel": "info"
+  },
+  "redis": {
+    "host": "redis",
+    "port": 6379,
+    "db": 0,
+    "ttl": 3600
+  },
+  "agents": {
+    "architect": {
+      "model": "openai/gpt-4o",
+      "temperature": 0.7,
+      "maxTokens": 2000,
+      "timeout": 60
+    },
+    "coder": {
+      "model": "mistral/codestral-22b",
+      "temperature": 0.5,
+      "maxTokens": 4000,
+      "timeout": 120
+    },
+    "debugger": {
+      "model": "anthropic/claude-3-5-sonnet",
+      "temperature": 0.6,
+      "maxTokens": 2000,
+      "timeout": 60
+    },
+    "fallback": {
+      "model": "meta-llama/llama-3.1-70b",
+      "temperature": 0.7,
+      "maxTokens": 2000
+    }
+  },
+  "sandbox": {
+    "cpuLimit": "1",
+    "memoryLimit": "512m",
+    "timeout": 300,
+    "networkDisabled": true,
+    "languages": ["python", "javascript", "typescript", "java", "go", "rust", "cpp"]
+  },
+  "security": {
+    "apiKeyValidation": true,
+    "rateLimiting": {
+      "enabled": true,
+      "requestsPerMinute": 60
+    },
+    "https": {
+      "enabled": false,
+      "certPath": null
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "file": "/var/log/opendevagent.log",
+    "maxSize": "100MB",
+    "maxFiles": 10
+  }
+}

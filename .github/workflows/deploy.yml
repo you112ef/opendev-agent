@@ -1,0 +1,319 @@
+name: Deploy OpenDevAgent
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  REGISTRY: ghcr.io
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/opendev-frontend
+  BACKEND_IMAGE: ghcr.io/${{ github.repository }}/opendev-backend
+
+jobs:
+  # Job 1: Build Frontend
+  build-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.FRONTEND_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.FRONTEND_IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.FRONTEND_IMAGE }}:buildcache,mode=max
+
+  # Job 2: Build Backend
+  build-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.BACKEND_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+
+      - name: Build and push Backend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.BACKEND_IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.BACKEND_IMAGE }}:buildcache,mode=max
+
+  # Job 3: Test Frontend
+  test-frontend:
+    runs-on: ubuntu-latest
+    needs: build-frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Type check
+        working-directory: frontend
+        run: npm run type-check
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+  # Job 4: Test Backend
+  test-backend:
+    runs-on: ubuntu-latest
+    needs: build-backend
+
+    services:
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Lint with Pylint
+        working-directory: backend
+        run: |
+          pip install pylint
+          pylint agent_logic/ main.py --fail-under=8.0 || true
+
+      - name: Type check with Mypy
+        working-directory: backend
+        run: |
+          pip install mypy
+          mypy agent_logic/ main.py --ignore-missing-imports || true
+
+  # Job 5: Security Scanning
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: frontend/Dockerfile
+
+      - name: Run hadolint for backend
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: backend/Dockerfile
+
+  # Job 6: Deploy to Staging (Google Cloud)
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, build-backend, test-frontend, test-backend, security-scan]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Configure Docker to use gcloud
+        run: |
+          gcloud auth configure-docker
+
+      - name: Deploy to Cloud Run (Staging)
+        run: |
+          gcloud run deploy opendev-backend-staging \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/opendev-backend:develop \
+            --platform managed \
+            --region us-central1 \
+            --memory 512Mi \
+            --set-env-vars OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}
+
+          gcloud run deploy opendev-frontend-staging \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/opendev-frontend:develop \
+            --platform managed \
+            --region us-central1 \
+            --memory 256Mi
+
+  # Job 7: Deploy to Production (Google Cloud)
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, build-backend, test-frontend, test-backend, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: production
+      url: https://opendevagent.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Configure Docker to use gcloud
+        run: |
+          gcloud auth configure-docker
+
+      - name: Deploy to Cloud Run (Production)
+        run: |
+          gcloud run deploy opendev-backend \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/opendev-backend:latest \
+            --platform managed \
+            --region us-central1 \
+            --memory 512Mi \
+            --set-env-vars OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }} \
+            --set-env-vars REDIS_HOST=${{ secrets.REDIS_HOST }}
+
+          gcloud run deploy opendev-frontend \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/opendev-frontend:latest \
+            --platform managed \
+            --region us-central1 \
+            --memory 256Mi \
+            --set-env-vars NEXT_PUBLIC_API_URL=https://opendev-backend-xxxxx.a.run.app
+
+      - name: Run smoke tests
+        run: |
+          echo "Testing health endpoint..."
+          curl -f https://opendev-backend-xxxxx.a.run.app/api/health || exit 1
+          echo "Health check passed!"
+
+  # Job 8: Notify Success
+  notify-success:
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: success()
+
+    steps:
+      - name: Send success notification
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Deployment successful! The changes have been deployed to production.'
+            })
+
+  # Job 9: Notify Failure
+  notify-failure:
+    runs-on: ubuntu-latest
+    if: failure()
+
+    steps:
+      - name: Send failure notification
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Deployment failed. Please check the logs for more information.'
+            })

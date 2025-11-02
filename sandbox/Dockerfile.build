@@ -1,0 +1,17 @@
+FROM alpine:latest
+
+RUN apk add --no-cache \
+    python3 \
+    nodejs \
+    npm \
+    golang \
+    rust \
+    cargo \
+    openjdk21-jdk \
+    git \
+    curl \
+    build-base
+
+WORKDIR /app
+
+CMD ["/bin/sh"]
