@@ -1,0 +1,9 @@
+{
+  "projectId": "opendev-agent",
+  "name": "opendev-agent",
+  "environments": {
+    "production": {
+      "name": "production"
+    }
+  }
+}
