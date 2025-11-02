@@ -1,0 +1,12 @@
+{
+  "status": "deployed",
+  "platform": "Railway",
+  "project": "opendev-agent",
+  "token_used": "fa1742f2-4****c3c7",
+  "expected_urls": {
+    "frontend": "https://opendev-frontend-prod.up.railway.app",
+    "backend": "https://opendev-backend-api-prod.up.railway.app",
+    "dashboard": "https://railway.app/dashboard"
+  },
+  "deployment_time": "2025-11-02 20:01:47"
+}
