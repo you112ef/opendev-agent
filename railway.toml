@@ -1,0 +1,22 @@
+
+[build]
+builder = "dockerfile"
+dockerfile = "Dockerfile"
+
+[deploy]
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[[services]]
+name = "backend"
+dockerfile = "./backend/Dockerfile"
+buildCommand = "pip install -r requirements.txt"
+startCommand = "python main.py"
+port = 8000
+
+[[services]]
+name = "frontend"
+dockerfile = "./frontend/Dockerfile"
+buildCommand = "npm install && npm run build"
+startCommand = "npm start"
+port = 3000
