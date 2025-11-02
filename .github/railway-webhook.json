@@ -1,0 +1,12 @@
+{
+  "event": "push",
+  "ref": "refs/heads/main",
+  "repository": {
+    "full_name": "you112ef/opendev-agent",
+    "url": "https://github.com/you112ef/opendev-agent"
+  },
+  "pusher": {
+    "name": "capy-agent",
+    "email": "capy@deploy.app"
+  }
+}
