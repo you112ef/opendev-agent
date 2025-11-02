@@ -1,0 +1,17 @@
+{
+  "project": "opendev-agent",
+  "repository": "you112ef/opendev-agent",
+  "platform": "railway",
+  "timestamp": "2025-11-02 19:55:10",
+  "status": "deploying",
+  "services": {
+    "frontend": {
+      "port": 3000,
+      "dockerfile": "frontend/Dockerfile"
+    },
+    "backend": {
+      "port": 8000,
+      "dockerfile": "backend/Dockerfile"
+    }
+  }
+}
