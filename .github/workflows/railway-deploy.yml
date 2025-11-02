@@ -1,17 +1,57 @@
-name: Deploy to Railway
+name: 🚂 Deploy to Railway
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
 jobs:
   deploy:
+    name: Deploy to Railway
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Deploy to Railway
-        uses: railway-app/deploy-action@v1
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.RAILWAY_TOKEN }}
-          service: opendev-agent
+          fetch-depth: 0
+      
+      - name: 🔍 Check Railway files
+        run: |
+          ls -la railway.*
+          ls -la Dockerfile
+          echo "✅ All deployment files exist"
+      
+      - name: 🚂 Install Railway CLI
+        run: |
+          npm install -g @railway/cli
+          railway --version
+      
+      - name: 🔑 Authenticate with Railway
+        run: |
+          echo "RAILWAY_TOKEN=${{ env.RAILWAY_TOKEN }}" > ~/.railway
+          railway whoami
+      
+      - name: 📦 Deploy to Railway
+        run: |
+          cd /project/workspace/OpenDevAgent_Platform
+          railway up --detach
+        env:
+          RAILWAY_TOKEN: ${{ env.RAILWAY_TOKEN }}
+  
+  notify:
+    name: 📢 Notify on completion
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    
+    steps:
+      - name: ✅ Deployment completed
+        run: |
+          echo "🎉 Deployment to Railway completed!"
+          echo "📍 Visit: https://railway.app/dashboard"
+          echo "✨ Your app should be live in 5-10 minutes"
