@@ -35,43 +35,28 @@ export default function RealTimeLogViewer({ taskId, isLive = true }: RealTimeLog
   }, [logs, isAutoScroll])
 
   return (
-    <div className="w-full h-96 glass-strong rounded-2xl shadow-glow border border-white/10 overflow-hidden flex flex-col animate-fade-scale">
-      <div className="flex items-center justify-between p-5 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-            <span className="text-xl">📜</span>
-          </div>
-          <h3 className="text-lg font-bold gradient-text">السجلات المباشرة</h3>
-        </div>
+    <div className="w-full h-96 bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+        <h3 className="text-sm font-medium text-neutral-300">السجلات</h3>
         <button
           onClick={() => setIsAutoScroll(!isAutoScroll)}
-          className={`text-sm px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
+          className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
             isAutoScroll
-              ? 'bg-primary-500/20 text-primary-300 border border-primary-500/30 shadow-glow-sm'
-              : 'glass text-gray-400 hover:text-primary-300 border border-white/10 hover:border-primary-500/30'
+              ? 'bg-neutral-800 text-neutral-300'
+              : 'bg-black text-neutral-500 hover:text-neutral-300'
           }`}
         >
-          <span>{isAutoScroll ? '▼' : '⏸️'}</span>
           {isAutoScroll ? 'تمرير تلقائي' : 'إيقاف التمرير'}
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 font-mono text-sm text-gray-300 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-4 font-mono text-sm">
         {logs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full animate-pulse">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow mb-4 opacity-30">
-              <span className="text-3xl">📝</span>
-            </div>
-            <p className="text-gray-500 text-center">لا توجد سجلات حتى الآن...</p>
-            <p className="text-gray-600 text-xs mt-2">انتظر بدء المهمة</p>
-          </div>
+          <p className="text-neutral-600 text-center mt-20">لا توجد سجلات حتى الآن...</p>
         ) : (
           logs.map((log, idx) => (
-            <div key={idx} className="mb-2 p-3 glass rounded-lg border border-white/5 hover:border-primary-500/20 transition-colors duration-200 animate-slide-in" style={{animationDelay: `${idx * 0.02}s`}}>
-              <div className="flex items-start gap-3">
-                <span className="text-primary-400/60 font-bold min-w-[2.5rem] text-right">[{idx + 1}]</span>
-                <span className="text-gray-300 flex-1">{log}</span>
-              </div>
+            <div key={idx} className="mb-2 text-neutral-400">
+              <span className="text-neutral-600">[{idx + 1}]</span> {log}
             </div>
           ))
         )}

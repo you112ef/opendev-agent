@@ -19,38 +19,32 @@ export default function Home() {
         <meta name="description" content="منصة متقدمة لهندسة البرمجيات بالذكاء الاصطناعي" />
       </Head>
 
-      <main className="min-h-screen relative">
-        {/* Animated Background Elements */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary-500/10 rounded-full blur-3xl animate-float" style={{animationDelay: '1s'}} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent-500/5 rounded-full blur-3xl animate-pulse" />
-        </div>
+      <main className="min-h-screen relative bg-black">
 
-        {/* Header */}
-        <header className="glass border-b border-white/10 sticky top-0 z-40 backdrop-blur-xl">
-          <div className="max-w-7xl mx-auto px-6 py-4">
+        {/* Header - Minimal Dark */}
+        <header className="bg-black border-b border-neutral-800 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-                  <span className="text-2xl">🤖</span>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold gradient-text">
-                    OpenDevAgent
-                  </h1>
-                  <p className="text-gray-400 text-xs">منصة هندسة البرمجيات الذكية</p>
-                </div>
+              <div className="flex items-center gap-3">
+                <button className="p-2 hover:bg-neutral-900 rounded-lg transition-colors">
+                  <svg className="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+                <h1 className="text-base font-normal text-neutral-200">
+                  OpenDevAgent
+                </h1>
               </div>
-              {apiKey && (
-                <div className="flex items-center gap-3 px-4 py-2 glass rounded-xl border border-success-500/30 shadow-glow-sm">
-                  <div className="relative">
-                    <span className="w-2 h-2 bg-success-500 rounded-full inline-block animate-pulse" />
-                    <span className="absolute inset-0 w-2 h-2 bg-success-500 rounded-full animate-ping" />
-                  </div>
-                  <span className="text-success-400 text-sm font-medium">متصل</span>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                {apiKey && (
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                )}
+                <button className="p-2 hover:bg-neutral-900 rounded-lg transition-colors">
+                  <svg className="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </header>
@@ -58,37 +52,21 @@ export default function Home() {
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 py-8">
           {!apiKey ? (
-            // API Key Input
-            <div className="space-y-8 relative z-10">
-              <div className="text-center mb-12 animate-fade-scale">
-                <div className="inline-block mb-6">
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow-lg animate-float">
-                    <span className="text-5xl">🚀</span>
-                  </div>
-                </div>
-                <h2 className="text-5xl font-bold gradient-text mb-4">
-                  ابدأ مع OpenRouter API
+            // API Key Input - Minimal
+            <div className="max-w-2xl mx-auto space-y-8 px-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-normal text-neutral-200 mb-3">
+                  ابدأ مع OpenDevAgent
                 </h2>
-                <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                  أدخل مفتاح API الخاص بك للوصول إلى نظام الوكلاء الذكية المتقدمة
+                <p className="text-neutral-500 text-base">
+                  أدخل مفتاح OpenRouter API للبدء
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-6">
-                  <div className="px-4 py-2 glass rounded-full border border-primary-500/30 text-sm text-primary-300">
-                    ⚡ 3 وكلاء متخصصين
-                  </div>
-                  <div className="px-4 py-2 glass rounded-full border border-secondary-500/30 text-sm text-secondary-300">
-                    🔒 آمن ومشفر
-                  </div>
-                  <div className="px-4 py-2 glass rounded-full border border-accent-500/30 text-sm text-accent-300">
-                    🚀 نتائج فورية
-                  </div>
-                </div>
               </div>
               <ApiKeyInputForm />
             </div>
           ) : (
-            // Main Dashboard
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+            // Main Dashboard - Minimal
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 max-w-7xl mx-auto">
               {/* Left Column - Task Creation */}
               <div className="lg:col-span-1">
                 <TaskCreationWizard />
@@ -97,36 +75,33 @@ export default function Home() {
               {/* Right Column - Task Display */}
               <div className="lg:col-span-2 space-y-6">
                 {selectedTask ? (
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     <AgentStatusDashboard task={selectedTask} />
                     <RealTimeLogViewer taskId={selectedTask.id} />
                   </div>
                 ) : (
-                  <div className="p-12 glass-strong rounded-2xl shadow-glow border border-white/10 text-center animate-fade-scale">
-                    <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow opacity-50">
-                      <span className="text-6xl">✨</span>
-                    </div>
-                    <p className="text-gray-300 text-xl mb-2 font-medium">
+                  <div className="p-8 bg-neutral-900 rounded-xl border border-neutral-800 text-center">
+                    <p className="text-neutral-400 text-base mb-2">
                       {tasks.length === 0
-                        ? 'جاهز للبدء!'
+                        ? 'لم تقم بإنشاء أي مهام بعد'
                         : 'اختر مهمة لعرض التفاصيل'}
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-neutral-600 text-sm">
                       {tasks.length === 0
-                        ? 'أنشئ مهمتك الأولى من القائمة اليمنى'
-                        : 'انقر على أي مهمة من القائمة أدناه'}
+                        ? 'أنشئ مهمتك الأولى من القائمة'
+                        : 'انقر على أي مهمة'}
                     </p>
                   </div>
                 )}
 
                 {/* Tasks List */}
                 {tasks.length > 0 && (
-                  <div className="p-6 glass-strong rounded-2xl shadow-glow border border-white/10 animate-slide-in">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-bold gradient-text">
+                  <div className="p-4 bg-neutral-900 rounded-xl border border-neutral-800">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-neutral-300">
                         المهام
                       </h3>
-                      <span className="px-3 py-1 bg-primary-500/20 rounded-full text-primary-300 text-sm font-medium">
+                      <span className="text-xs text-neutral-500">
                         {tasks.length}
                       </span>
                     </div>
@@ -135,23 +110,23 @@ export default function Home() {
                         <button
                           key={task.id}
                           onClick={() => setSelectedTaskId(task.id)}
-                          className={`w-full text-right p-4 rounded-xl border transition-all duration-200 hover-lift ${
+                          className={`w-full text-right p-3 rounded-lg border transition-colors ${
                             selectedTask?.id === task.id
-                              ? 'glass-strong border-primary-500/50 shadow-glow-sm'
-                              : 'glass border-white/10 hover:border-primary-500/30'
+                              ? 'bg-neutral-800 border-neutral-700'
+                              : 'bg-black border-neutral-800 hover:border-neutral-700'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1">
-                            <span className="font-semibold text-sm text-gray-200">
+                            <span className="font-medium text-sm text-neutral-300">
                               {task.language} • {task.framework}
                             </span>
                             <span
-                              className={`text-xs px-3 py-1 rounded-full font-medium ${
+                              className={`text-xs px-2 py-1 rounded ${
                                 task.status === 'completed'
-                                  ? 'bg-success-500/20 text-success-400 border border-success-500/30'
+                                  ? 'bg-green-900/30 text-green-400'
                                   : task.status === 'error'
-                                  ? 'bg-error-500/20 text-error-400 border border-error-500/30'
-                                  : 'bg-primary-500/20 text-primary-400 border border-primary-500/30 animate-pulse'
+                                  ? 'bg-red-900/30 text-red-400'
+                                  : 'bg-blue-900/30 text-blue-400'
                               }`}
                             >
                               {task.status === 'running' && 'جاري'}
@@ -160,8 +135,8 @@ export default function Home() {
                               {task.status === 'pending' && 'معلقة'}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-400 truncate mt-2">
-                            {task.description.substring(0, 60)}...
+                          <p className="text-xs text-neutral-600 truncate mt-1">
+                            {task.description.substring(0, 50)}...
                           </p>
                         </button>
                       ))}

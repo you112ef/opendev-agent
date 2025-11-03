@@ -73,25 +73,17 @@ export default function TaskCreationWizard() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-8 glass-strong rounded-2xl shadow-glow border border-white/10 animate-fade-scale">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow animate-float">
-          <span className="text-2xl">✨</span>
-        </div>
-        <div>
-          <h2 className="text-xl font-bold gradient-text">إنشاء مهمة جديدة</h2>
-          <p className="text-xs text-gray-500">حول فكرتك إلى كود</p>
-        </div>
-      </div>
+    <div className="w-full max-w-2xl mx-auto p-6 bg-neutral-900 rounded-xl border border-neutral-800">
+      <h2 className="text-lg font-medium text-neutral-200 mb-6">إنشاء مهمة جديدة</h2>
 
-      <div className="mb-8 flex items-center gap-2">
+      <div className="mb-6 flex gap-2">
         {[1, 2, 3].map((s) => (
-          <div key={s} className="flex-1 flex items-center gap-2">
-            <div className={`flex-1 h-2 rounded-full transition-all duration-300 ${
-              s <= step ? 'bg-gradient-primary shadow-glow-sm' : 'glass'
-            }`} />
-            {s < 3 && <span className="text-gray-600">•</span>}
-          </div>
+          <div
+            key={s}
+            className={`flex-1 h-1 rounded-full transition-colors ${
+              s <= step ? 'bg-white' : 'bg-neutral-700'
+            }`}
+          />
         ))}
       </div>
 
@@ -109,9 +101,9 @@ export default function TaskCreationWizard() {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  placeholder="مثال: إنشاء REST API لإدارة المهام مع CRUD operations؛ استخدم FastAPI وSQLite..."
+                  placeholder="صف المهمة التي تريد تنفيذها..."
                   rows={5}
-                  className="w-full px-5 py-4 glass text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 transition-all duration-200 resize-none"
+                  className="w-full px-4 py-3 bg-black text-white placeholder-neutral-600 border border-neutral-700 rounded-lg focus:outline-none focus:border-neutral-600 transition-colors resize-none"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none" />
               </div>
@@ -138,7 +130,7 @@ export default function TaskCreationWizard() {
                         framework: frameworks[lang as keyof typeof frameworks][0],
                       })
                     }}
-                    className="w-full px-5 py-4 glass text-white border border-white/10 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 transition-all duration-200 appearance-none cursor-pointer"
+                    className="w-full px-4 py-3 bg-black text-white border border-neutral-700 rounded-lg focus:outline-none focus:border-neutral-600 transition-colors cursor-pointer"
                   >
                   {languages.map((lang) => (
                     <option key={lang} value={lang}>
@@ -231,45 +223,25 @@ export default function TaskCreationWizard() {
         {step > 1 && (
           <button
             onClick={() => setStep(step - 1)}
-            className="flex-1 py-4 glass border border-white/10 text-white font-semibold rounded-xl hover:border-primary-500/30 transition-all duration-200 hover-lift"
+            className="flex-1 py-3 bg-neutral-800 border border-neutral-700 text-white font-medium rounded-lg hover:bg-neutral-700 transition-colors"
           >
-            <span className="flex items-center justify-center gap-2">
-              <span>←</span>
-              السابق
-            </span>
+            السابق
           </button>
         )}
         {step < 3 ? (
           <button
             onClick={handleNext}
-            className="flex-1 py-4 bg-gradient-primary text-white font-semibold rounded-xl hover:shadow-glow-lg transition-all duration-200 relative overflow-hidden group"
+            className="flex-1 py-3 bg-white text-black font-medium rounded-lg hover:bg-neutral-200 transition-colors"
           >
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              التالي
-              <span>→</span>
-            </span>
-            <div className="absolute inset-0 bg-gradient-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            التالي
           </button>
         ) : (
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="flex-1 py-4 bg-gradient-primary text-white font-semibold rounded-xl hover:shadow-glow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+            className="flex-1 py-3 bg-white text-black font-medium rounded-lg hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              {isLoading ? (
-                <>
-                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  جاري الإرسال...
-                </>
-              ) : (
-                <>
-                  <span>🚀</span>
-                  بدء المهمة
-                </>
-              )}
-            </span>
-            <div className="absolute inset-0 bg-gradient-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            {isLoading ? 'جاري الإرسال...' : 'بدء المهمة'}
           </button>
         )}
       </div>
