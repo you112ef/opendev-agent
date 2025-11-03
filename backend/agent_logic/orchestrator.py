@@ -21,7 +21,7 @@ class AgentOrchestrator:
         self.sandbox_executor = SandboxExecutor()
 
     async def initialize(self):
-        logger.info("?? Initializing Agent Orchestrator with CrewAI")
+        logger.info("🚀 Initializing Agent Orchestrator with CrewAI")
 
     async def validate_api_key(self, api_key: str) -> bool:
         """Validate OpenRouter API key"""
@@ -47,9 +47,9 @@ class AgentOrchestrator:
         try:
             self.current_api_key = task.api_key
             cache[task_id]["status"] = "running"
-            cache[task_id]["logs"].append(f"?? Task started: {task.description[:100]}...")
+            cache[task_id]["logs"].append(f"🚀 Task started: {task.description[:100]}...")
             
-            logger.info(f"?? Executing task {task_id} with CrewAI multi-agent system")
+            logger.info(f"🚀 Executing task {task_id} with CrewAI multi-agent system")
             
             # Initialize Software Engineer Crew
             crew = SoftwareEngineerCrew(
@@ -77,7 +77,7 @@ class AgentOrchestrator:
                 logger.error(f"? Task {task_id} failed: {result.get('error')}")
             
         except Exception as e:
-            logger.error(f"?? Task {task_id} execution failed: {str(e)}")
+            logger.error(f"? Task {task_id} execution failed: {str(e)}")
             cache[task_id]["status"] = "error"
             cache[task_id]["error"] = str(e)
             cache[task_id]["logs"].append(f"? Fatal error: {str(e)}")

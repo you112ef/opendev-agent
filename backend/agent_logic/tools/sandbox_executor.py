@@ -25,7 +25,7 @@ class SandboxExecutor:
             self.client = docker.from_env()
             logger.info("? Docker client initialized successfully")
         except Exception as e:
-            logger.warning(f"?? Docker not available: {str(e)}")
+            logger.warning(f"⚠️ Docker not available: {str(e)}")
             self.client = None
         
         self.timeout = 300  # 5 minutes
@@ -58,7 +58,7 @@ class SandboxExecutor:
             
             # Create temporary working directory
             work_dir = tempfile.mkdtemp(prefix=f"sandbox_{task_id}_")
-            logger.info(f"?? Created sandbox directory: {work_dir}")
+            logger.info(f"📁 Created sandbox directory: {work_dir}")
             
             # Write code and setup files
             self._prepare_sandbox_environment(work_dir, code, language, framework)
@@ -66,7 +66,7 @@ class SandboxExecutor:
             # Determine execution command
             exec_command = test_command or self._get_execution_command(language, framework)
             
-            logger.info(f"?? Starting container {container_name} with image {image}")
+            logger.info(f"🐳 Starting container {container_name} with image {image}")
             logger.info(f"? Executing command: {exec_command}")
             
             # Run container with resource limits
@@ -125,7 +125,7 @@ class SandboxExecutor:
             }
         
         except Exception as e:
-            logger.error(f"?? Sandbox execution error: {str(e)}")
+            logger.error(f"? Sandbox execution error: {str(e)}")
             return {
                 "success": False,
                 "output": "",
@@ -139,16 +139,16 @@ class SandboxExecutor:
                 try:
                     container.stop(timeout=5)
                     container.remove()
-                    logger.info(f"?? Container {container_name} removed")
+                    logger.info(f"🧹 Container {container_name} removed")
                 except Exception as e:
-                    logger.warning(f"?? Failed to cleanup container: {str(e)}")
+                    logger.warning(f"⚠️ Failed to cleanup container: {str(e)}")
             
             if work_dir and os.path.exists(work_dir):
                 try:
                     shutil.rmtree(work_dir)
-                    logger.info(f"?? Sandbox directory cleaned: {work_dir}")
+                    logger.info(f"🧹 Sandbox directory cleaned: {work_dir}")
                 except Exception as e:
-                    logger.warning(f"?? Failed to cleanup directory: {str(e)}")
+                    logger.warning(f"⚠️ Failed to cleanup directory: {str(e)}")
     
     def _prepare_sandbox_environment(self, work_dir: str, code: str, language: str, framework: str):
         """Prepare the sandbox environment with code and configuration files"""
@@ -164,7 +164,7 @@ class SandboxExecutor:
         elif language.lower() == "java":
             self._create_java_setup(work_dir, framework)
         
-        logger.info(f"?? Sandbox environment prepared for {language}")
+        logger.info(f"🛠️ Sandbox environment prepared for {language}")
     
     def _create_python_setup(self, work_dir: str, framework: str):
         """Create Python-specific setup files"""
@@ -244,7 +244,7 @@ class SandboxExecutor:
     
     def _simulate_execution(self, code: str, language: str) -> Dict[str, any]:
         """Simulate code execution when Docker is not available"""
-        logger.info("?? Simulating code execution (Docker not available)")
+        logger.info("🎭 Simulating code execution (Docker not available)")
         return {
             "success": True,
             "output": f"Code simulation successful for {language}\nCode length: {len(code)} characters",
@@ -272,9 +272,13 @@ class SandboxExecutor:
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(code)
         
-        logger.info(f"?? Code written to {file_name}")
+        logger.info(f"📝 Code written to {file_name}")
         return file_name
     
+    def _get_docker_image(self, language: str) -> str:
+        """Get appropriate Docker image for the language"""
+        images = {
+            "python": "python:3.11-slim",
             "javascript": "node:20-alpine",
             "typescript": "node:20-alpine",
             "java": "openjdk:21-slim",
@@ -294,8 +298,8 @@ class SandboxExecutor:
             container = self.client.containers.get(container_name)
             container.kill()
             container.remove()
-            logger.info(f"?? Cleaned up sandbox container: {container_name}")
+            logger.info(f"🧹 Cleaned up sandbox container: {container_name}")
         except docker.errors.NotFound:
             logger.info(f"Container {container_name} not found (already removed)")
         except Exception as e:
-            logger.warning(f"?? Failed to cleanup container: {str(e)}")
+            logger.warning(f"⚠️ Failed to cleanup container: {str(e)}")
