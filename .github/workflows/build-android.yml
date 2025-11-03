@@ -135,15 +135,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 📱 Android APK Built Successfully!
-              
-✅ Debug APK is ready
-📦 Size: ${fileSizeInMB} MB
-⬇️ Download from the artifacts above
-
-**Installation:**
-\`\`\`bash
-adb install app-debug.apk
-\`\`\`
-              `
+              body: `## 📱 Android APK Built Successfully!\n\n✅ Debug APK is ready\n📦 Size: ${fileSizeInMB} MB\n⬇️ Download from the artifacts above\n\n**Installation:**\n\`\`\`bash\nadb install app-debug.apk\n\`\`\`\n`
             })
