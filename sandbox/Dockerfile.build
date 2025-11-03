@@ -1,17 +1,23 @@
-FROM alpine:latest
+FROM docker:24-dind
 
+# Install build tools
 RUN apk add --no-cache \
     python3 \
+    py3-pip \
     nodejs \
     npm \
-    golang \
+    go \
+    openjdk21 \
     rust \
-    cargo \
-    openjdk21-jdk \
-    git \
-    curl \
-    build-base
+    cargo
 
-WORKDIR /app
+WORKDIR /build
+
+# Pre-pull common Docker images
+RUN docker pull python:3.11-slim && \
+    docker pull node:20-alpine && \
+    docker pull openjdk:21-slim && \
+    docker pull golang:1.22-alpine && \
+    docker pull rust:latest
 
 CMD ["/bin/sh"]

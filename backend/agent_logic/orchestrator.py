@@ -3,6 +3,8 @@ import asyncio
 from typing import Dict, Any
 import httpx
 from .models import TaskRequest, ExecutionResult
+from .software_engineer_crew import SoftwareEngineerCrew
+from .tools.sandbox_executor import SandboxExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -11,14 +13,15 @@ class AgentOrchestrator:
         self.openrouter_base_url = "https://openrouter.ai/api/v1"
         self.models = {
             "architect": "openai/gpt-4o",
-            "coder": "mistral/codestral-22b",
-            "debugger": "anthropic/claude-3-5-sonnet",
+            "coder": "anthropic/claude-3.5-sonnet",
+            "debugger": "anthropic/claude-3.5-sonnet",
             "fallback": "meta-llama/llama-3.1-70b"
         }
         self.current_api_key = None
+        self.sandbox_executor = SandboxExecutor()
 
     async def initialize(self):
-        logger.info("Initializing Agent Orchestrator")
+        logger.info("🚀 Initializing Agent Orchestrator with CrewAI")
 
     async def validate_api_key(self, api_key: str) -> bool:
         """Validate OpenRouter API key"""
@@ -40,27 +43,44 @@ class AgentOrchestrator:
             return False
 
     async def execute_task(self, task_id: str, task: TaskRequest, cache: Dict):
-        """Execute the complete Plan-Act-Observe-Fix cycle"""
+        """Execute the complete Plan-Act-Observe-Fix cycle using CrewAI"""
         try:
             self.current_api_key = task.api_key
             cache[task_id]["status"] = "running"
+            cache[task_id]["logs"].append(f"🚀 Task started: {task.description[:100]}...")
             
-            # Phase 1: Plan (Architect Agent)
-            await self._run_architect_phase(task_id, task, cache)
+            logger.info(f"🚀 Executing task {task_id} with CrewAI multi-agent system")
             
-            # Phase 2: Act (Coder Agent)
-            await self._run_coder_phase(task_id, task, cache)
+            # Initialize Software Engineer Crew
+            crew = SoftwareEngineerCrew(
+                api_key=task.api_key,
+                task_id=task_id,
+                cache=cache
+            )
             
-            # Phase 3: Observe & Fix (Debugger Agent)
-            await self._run_debugger_phase(task_id, task, cache)
+            # Execute the Plan-Act-Observe-Fix workflow
+            result = await asyncio.to_thread(
+                crew.execute,
+                task.description,
+                task.language,
+                task.framework,
+                task.complexity
+            )
             
-            cache[task_id]["status"] = "completed"
-            logger.info(f"Task {task_id} completed successfully")
+            if result["success"]:
+                cache[task_id]["status"] = "completed"
+                cache[task_id]["logs"].append("? Task completed successfully!")
+                logger.info(f"? Task {task_id} completed successfully")
+            else:
+                cache[task_id]["status"] = "error"
+                cache[task_id]["error"] = result.get("error", "Unknown error")
+                logger.error(f"? Task {task_id} failed: {result.get('error')}")
             
         except Exception as e:
-            logger.error(f"Task {task_id} failed: {str(e)}")
+            logger.error(f"? Task {task_id} execution failed: {str(e)}")
             cache[task_id]["status"] = "error"
             cache[task_id]["error"] = str(e)
+            cache[task_id]["logs"].append(f"? Fatal error: {str(e)}")
 
     async def _run_architect_phase(self, task_id: str, task: TaskRequest, cache: Dict):
         """Architecture planning phase"""

@@ -36,49 +36,36 @@ export default function AgentStatusDashboard({ task }: AgentStatusDashboardProps
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'text-success'
+        return 'text-green-400'
       case 'error':
-        return 'text-error'
+        return 'text-red-400'
       case 'running':
-        return 'text-highlight animate-pulse'
+        return 'text-blue-400'
       default:
-        return 'text-gray-400'
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return '✓'
-      case 'error':
-        return '✕'
-      case 'running':
-        return '⟳'
-      default:
-        return '○'
+        return 'text-neutral-500'
     }
   }
 
   return (
-    <div className="w-full p-6 bg-gradient-to-br from-secondary to-primary rounded-xl shadow-2xl border border-accent/20">
+    <div className="w-full p-6 bg-neutral-900 rounded-xl border border-neutral-800">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-highlight mb-2">حالة المهمة</h3>
-        <p className="text-gray-400 text-sm">ID: {task.id}</p>
+        <h3 className="text-lg font-medium text-neutral-200 mb-1">حالة المهمة</h3>
+        <p className="text-neutral-600 text-xs font-mono">#{task.id.substring(0, 8)}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-primary/50 rounded-lg border border-accent/30">
-          <p className="text-gray-400 text-sm mb-1">اللغة</p>
-          <p className="text-highlight font-semibold">{taskData.language}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+        <div className="p-4 bg-black rounded-lg border border-neutral-800">
+          <p className="text-neutral-500 text-xs mb-2">اللغة</p>
+          <p className="text-neutral-200 font-medium">{taskData.language}</p>
         </div>
-        <div className="p-4 bg-primary/50 rounded-lg border border-accent/30">
-          <p className="text-gray-400 text-sm mb-1">الإطار</p>
-          <p className="text-highlight font-semibold">{taskData.framework}</p>
+        <div className="p-4 bg-black rounded-lg border border-neutral-800">
+          <p className="text-neutral-500 text-xs mb-2">الإطار</p>
+          <p className="text-neutral-200 font-medium">{taskData.framework}</p>
         </div>
-        <div className="p-4 bg-primary/50 rounded-lg border border-accent/30">
-          <p className="text-gray-400 text-sm mb-1">الحالة</p>
-          <p className={`font-semibold ${getStatusColor(taskData.status)}`}>
-            {taskData.status === 'running' && 'جاري المعالجة'}
+        <div className="p-4 bg-black rounded-lg border border-neutral-800">
+          <p className="text-neutral-500 text-xs mb-2">الحالة</p>
+          <p className={`font-medium ${getStatusColor(taskData.status)}`}>
+            {taskData.status === 'running' && 'جاري'}
             {taskData.status === 'completed' && 'مكتملة'}
             {taskData.status === 'error' && 'خطأ'}
             {taskData.status === 'pending' && 'معلقة'}
@@ -86,22 +73,22 @@ export default function AgentStatusDashboard({ task }: AgentStatusDashboardProps
         </div>
       </div>
 
-      <div className="space-y-4">
-        <h4 className="text-lg font-semibold text-highlight">الوكلاء</h4>
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium text-neutral-300 mb-3">الوكلاء</h4>
         {taskData.agents?.map((agent, idx) => (
-          <div key={idx} className="p-4 bg-primary/50 rounded-lg border border-accent/30">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-3">
-                <span className={`text-2xl ${getStatusColor(agent.status)}`}>
-                  {getStatusIcon(agent.status)}
-                </span>
-                <span className="font-semibold text-white">{agent.name}</span>
-              </div>
-              <span className="text-sm text-gray-400">{agent.progress}%</span>
+          <div key={idx} className="p-4 bg-black rounded-lg border border-neutral-800">
+            <div className="flex items-center justify-between mb-3">
+              <span className="font-medium text-neutral-200">{agent.name}</span>
+              <span className="text-sm text-neutral-500">{agent.progress}%</span>
             </div>
-            <div className="w-full bg-primary/50 rounded-full h-2 overflow-hidden border border-accent/30">
+            <div className="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-300 bg-gradient-to-r from-highlight to-error`}
+                className={`h-full transition-all duration-300 ${
+                  agent.status === 'completed' ? 'bg-green-500' :
+                  agent.status === 'running' ? 'bg-blue-500' :
+                  agent.status === 'error' ? 'bg-red-500' :
+                  'bg-neutral-700'
+                }`}
                 style={{ width: `${agent.progress}%` }}
               />
             </div>
@@ -109,13 +96,16 @@ export default function AgentStatusDashboard({ task }: AgentStatusDashboardProps
         ))}
       </div>
 
-      <div className="mt-6 p-4 bg-primary/30 rounded-lg border border-accent/30">
-        <p className="text-sm text-gray-400">
-          تم الإنشاء في:{' '}
-          <span className="text-highlight">
-            {new Date(taskData.createdAt).toLocaleString('ar-SA')}
-          </span>
-        </p>
+      <div className="mt-6 pt-4 border-t border-neutral-800">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-neutral-500">تم الإنشاء</p>
+          <p className="text-xs text-neutral-400">
+            {new Date(taskData.createdAt).toLocaleString('ar-SA', {
+              dateStyle: 'short',
+              timeStyle: 'short'
+            })}
+          </p>
+        </div>
       </div>
     </div>
   )

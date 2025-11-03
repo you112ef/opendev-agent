@@ -35,28 +35,28 @@ export default function RealTimeLogViewer({ taskId, isLive = true }: RealTimeLog
   }, [logs, isAutoScroll])
 
   return (
-    <div className="w-full h-96 bg-gradient-to-br from-primary to-secondary rounded-xl shadow-2xl border border-accent/20 overflow-hidden flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b border-accent/30">
-        <h3 className="text-lg font-semibold text-highlight">السجلات</h3>
+    <div className="w-full h-96 bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+        <h3 className="text-sm font-medium text-neutral-300">السجلات</h3>
         <button
           onClick={() => setIsAutoScroll(!isAutoScroll)}
-          className={`text-sm px-3 py-1 rounded transition ${
+          className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
             isAutoScroll
-              ? 'bg-highlight text-primary'
-              : 'bg-primary/50 text-gray-400 hover:text-highlight'
+              ? 'bg-neutral-800 text-neutral-300'
+              : 'bg-black text-neutral-500 hover:text-neutral-300'
           }`}
         >
-          {isAutoScroll ? 'التمرير التلقائي' : 'إيقاف التمرير'}
+          {isAutoScroll ? 'تمرير تلقائي' : 'إيقاف التمرير'}
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 font-mono text-sm text-gray-300">
+      <div className="flex-1 overflow-y-auto p-4 font-mono text-sm">
         {logs.length === 0 ? (
-          <p className="text-gray-500 text-center mt-20">لا توجد سجلات حتى الآن...</p>
+          <p className="text-neutral-600 text-center mt-20">لا توجد سجلات حتى الآن...</p>
         ) : (
           logs.map((log, idx) => (
-            <div key={idx} className="mb-1 text-gray-400">
-              <span className="text-accent/50">[{idx + 1}]</span> {log}
+            <div key={idx} className="mb-2 text-neutral-400">
+              <span className="text-neutral-600">[{idx + 1}]</span> {log}
             </div>
           ))
         )}

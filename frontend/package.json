@@ -20,7 +20,6 @@
     "framer-motion": "^10.16.16",
     "react-hot-toast": "^2.4.1",
     "clsx": "^2.0.0",
-    "zustand": "^4.4.2",
     "date-fns": "^2.30.0"
   },
   "devDependencies": {

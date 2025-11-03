@@ -8,4 +8,8 @@ pydantic==2.5.0
 pydantic-settings==2.1.0
 docker==7.0.0
 aioredis==2.0.1
-asyncio==3.4.3
+crewai==0.22.5
+crewai-tools==0.4.5
+langchain==0.1.0
+langchain-openai==0.0.2
+langchain-community==0.0.10
