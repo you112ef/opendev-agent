@@ -1,14 +1,52 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useAppStore } from '@/lib/store'
 import ApiKeyInputForm from '@/components/ApiKeyInputForm'
 import TaskCreationWizard from '@/components/TaskCreationWizard'
 import AgentStatusDashboard from '@/components/AgentStatusDashboard'
 import RealTimeLogViewer from '@/components/RealTimeLogViewer'
+import CodePreview from '@/components/CodePreview'
+import ChatAssistant from '@/components/ChatAssistant'
+import PRDashboard from '@/components/PRDashboard'
+import { supabase } from '@/lib/supabaseClient'
+import { getUserApiKey } from '@/lib/supabaseClient'
 
 export default function Home() {
-  const { apiKey, currentTask, tasks } = useAppStore()
+  const { apiKey, currentTask, tasks, setApiKey } = useAppStore()
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Load API key from Supabase on mount
+    const loadApiKey = async () => {
+      const storedKey = await getUserApiKey()
+      if (storedKey) {
+        setApiKey(storedKey)
+      }
+    }
+    loadApiKey()
+
+    // Subscribe to runs updates
+    const channel = supabase
+      .channel('runs_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'runs',
+        },
+        (payload) => {
+          console.log('Runs update:', payload)
+          // Refresh tasks list
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [setApiKey])
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) || currentTask
 
@@ -39,6 +77,14 @@ export default function Home() {
                 {apiKey && (
                   <div className="w-2 h-2 bg-green-500 rounded-full" />
                 )}
+                <Link href="/settings">
+                  <button className="p-2 hover:bg-neutral-900 rounded-lg transition-colors">
+                    <svg className="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </button>
+                </Link>
                 <button className="p-2 hover:bg-neutral-900 rounded-lg transition-colors">
                   <svg className="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -77,6 +123,13 @@ export default function Home() {
                 {selectedTask ? (
                   <div className="space-y-4">
                     <AgentStatusDashboard task={selectedTask} />
+                    
+                    {/* Code Preview and Chat Side by Side */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <CodePreview runId={selectedTask.id} language={selectedTask.language} />
+                      <ChatAssistant runId={selectedTask.id} />
+                    </div>
+                    
                     <RealTimeLogViewer taskId={selectedTask.id} />
                   </div>
                 ) : (
@@ -93,6 +146,9 @@ export default function Home() {
                     </p>
                   </div>
                 )}
+
+                {/* PR Dashboard */}
+                <PRDashboard />
 
                 {/* Tasks List */}
                 {tasks.length > 0 && (

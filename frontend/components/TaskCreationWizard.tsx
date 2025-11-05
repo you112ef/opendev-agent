@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { submitTask } from '@/lib/api'
+import ModelSelector from './ModelSelector'
 
 const languages = ['Python', 'JavaScript', 'TypeScript', 'Java', 'Go', 'Rust', 'C++']
 const frameworks = {
@@ -24,7 +25,7 @@ export default function TaskCreationWizard() {
     complexity: 'medium',
   })
   const [isLoading, setIsLoading] = useState(false)
-  const { apiKey, addTask, addNotification } = useAppStore()
+  const { apiKey, selectedModel, addTask, addNotification } = useAppStore()
 
   const handleNext = () => {
     if (step === 1 && !formData.description.trim()) {
@@ -42,8 +43,11 @@ export default function TaskCreationWizard() {
 
     setIsLoading(true)
     try {
-      const response = await submitTask(apiKey, formData)
-      const taskId = response.task_id || Date.now().toString()
+      const response = await submitTask({
+        ...formData,
+        model_id: selectedModel || undefined,
+      })
+      const taskId = response.run?.id || response.task_id || Date.now().toString()
       
       addTask({
         id: taskId,
@@ -162,6 +166,10 @@ export default function TaskCreationWizard() {
                   )}
                 </select>
               </label>
+            </div>
+            
+            <div className="mt-4">
+              <ModelSelector />
             </div>
           </div>
         )}

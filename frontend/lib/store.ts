@@ -16,12 +16,18 @@ export interface Task {
   status: 'pending' | 'running' | 'completed' | 'error'
   createdAt: Date
   agents: AgentStatus[]
+  github_pr_url?: string
+  github_pr_number?: number
+  generated_code?: Record<string, string>
 }
 
 interface AppStore {
   apiKey: string | null
   setApiKey: (key: string) => void
   clearApiKey: () => void
+  
+  selectedModel: string | null
+  setSelectedModel: (model: string) => void
   
   currentTask: Task | null
   setCurrentTask: (task: Task) => void
@@ -45,6 +51,9 @@ export const useAppStore = create<AppStore>((set) => ({
   apiKey: null,
   setApiKey: (key) => set({ apiKey: key }),
   clearApiKey: () => set({ apiKey: null }),
+  
+  selectedModel: null,
+  setSelectedModel: (model) => set({ selectedModel: model }),
   
   currentTask: null,
   setCurrentTask: (task) => set({ currentTask: task }),
