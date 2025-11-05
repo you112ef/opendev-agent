@@ -1,0 +1,36 @@
+{
+  "project_ref": "sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc",
+  "supabase_url": "https://sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc.supabase.co",
+  "functions": [
+    {
+      "name": "openrouter-models",
+      "path": "backend/supabase/functions/openrouter-models/index.ts"
+    },
+    {
+      "name": "openrouter-proxy",
+      "path": "backend/supabase/functions/openrouter-proxy/index.ts"
+    },
+    {
+      "name": "validate-api-key",
+      "path": "backend/supabase/functions/validate-api-key/index.ts"
+    },
+    {
+      "name": "run-handler",
+      "path": "backend/supabase/functions/run-handler/index.ts"
+    },
+    {
+      "name": "task-executor",
+      "path": "backend/supabase/functions/task-executor/index.ts"
+    },
+    {
+      "name": "github-pr",
+      "path": "backend/supabase/functions/github-pr/index.ts"
+    },
+    {
+      "name": "sandbox-execute",
+      "path": "backend/supabase/functions/sandbox-execute/index.ts"
+    }
+  ],
+  "migration": "backend/supabase/migrations/001_init_ready.sql",
+  "vercel_url": "https://frontend-5h9xeldmb-bades-projects-40452333.vercel.app"
+}
