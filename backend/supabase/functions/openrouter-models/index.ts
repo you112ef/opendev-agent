@@ -1,5 +1,5 @@
 // Supabase Edge Function: OpenRouter Models Discovery
-// Deno runtime
+// Returns ALL available models from OpenRouter (no exclusion)
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -18,32 +18,27 @@ serve(async (req) => {
   }
 
   try {
-    // Get authenticated user
+    // Get authenticated user (optional - can work without auth for public models)
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
+          headers: { Authorization: req.headers.get('Authorization') || '' },
         },
       }
     )
 
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser()
-
-    if (!user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+    // Try to get user, but don't fail if not authenticated
+    let user = null
+    try {
+      const { data: { user: authUser } } = await supabaseClient.auth.getUser()
+      user = authUser
+    } catch {
+      // Allow public access to models list
     }
 
-    // Fetch models from OpenRouter
+    // Fetch ALL models from OpenRouter API
     const response = await fetch(`${OPENROUTER_API_URL}/models`, {
       headers: {
         'Content-Type': 'application/json',
@@ -56,11 +51,23 @@ serve(async (req) => {
 
     const data = await response.json()
     
-    // Return all models (no exclusion)
+    // Extract all models from response
+    const allModels = data.data || []
+    
+    // Sort models by name for better UX
+    const sortedModels = allModels.sort((a: any, b: any) => {
+      const nameA = (a.name || a.id || '').toLowerCase()
+      const nameB = (b.name || b.id || '').toLowerCase()
+      return nameA.localeCompare(nameB)
+    })
+    
+    // Return ALL models (no exclusion, no filtering)
     return new Response(
       JSON.stringify({
-        models: data.data || [],
-        count: data.data?.length || 0,
+        models: sortedModels,
+        count: sortedModels.length,
+        total: sortedModels.length,
+        message: `Found ${sortedModels.length} models from OpenRouter`,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -68,7 +75,11 @@ serve(async (req) => {
     )
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        models: [],
+        count: 0,
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
