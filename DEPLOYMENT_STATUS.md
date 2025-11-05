@@ -1,113 +1,79 @@
-# 🚀 OpenDevAgent - Railway Deployment Status
+# 🚀 Complete Deployment Status
 
-## ✅ ما تم إنجازه:
+## ✅ Vercel Frontend Deployment
+- **Status:** ✅ Deployed
+- **URL:** https://frontend-5h9xeldmb-bades-projects-40452333.vercel.app
+- **Environment Variables:** ✅ Configured
 
-### 📁 ملفات النشر المُعدّة:
-- ✅ `railway.json` - تكوين الخدمات
-- ✅ `railway.toml` - إعدادات البناء
-- ✅ `Dockerfile` - بناء الحاوية الرئيسية
-- ✅ `backend/Dockerfile` - حاوية الخلفية
-- ✅ `frontend/Dockerfile` - حاوية الواجهة
-- ✅ `.github/workflows/railway-deploy.yml` - GitHub Actions workflow
+## ⚠️ Supabase Backend Deployment
 
-### 🔗 Repository GitHub:
-- ✅ Repository: `https://github.com/you112ef/opendev-agent`
-- ✅ Branch: `main`
-- ✅ جميع الملفات مرفوعة ✅
+### Database Migrations
+**Status:** ⏳ Pending
 
-### 🎯 خيارات النشر الآن:
+**Action Required:**
+1. Go to: https://supabase.com/dashboard/project/sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc/sql/new
+2. Copy entire content from `backend/supabase/migrations/001_init_ready.sql`
+3. Paste and execute
 
----
+**Expected Tables:**
+- `user_settings`
+- `runs`
+- `run_logs`
+- `agent_status`
 
-## 🚂 الخيار 1: النشر المباشر من Railway (الأسهل)
+### Edge Functions Deployment
+**Status:** ⏳ Pending
 
-```
-1. اذهب إلى: https://railway.app/dashboard
-2. اضغط: "New Project"
-3. اختر: "Deploy from GitHub repo"
-4. ابحث عن: "opendev-agent"
-5. اختر: "you112ef/opendev-agent"
-6. اضغط: "Deploy" ✅
-```
+**Functions to Deploy:**
+1. `openrouter-models` - Fetch OpenRouter models
+2. `openrouter-proxy` - Proxy chat completions
+3. `validate-api-key` - Validate user API keys
+4. `run-handler` - Handle task creation/retrieval
+5. `task-executor` - Execute AI tasks
+6. `github-pr` - Create GitHub PRs
+7. `sandbox-execute` - Execute code in sandbox
 
-**الوقت:** ~5-7 دقائق
+**Deployment Options:**
 
----
+**Option A: Via Dashboard (Easiest)**
+1. Go to: https://supabase.com/dashboard/project/sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc/functions
+2. For each function:
+   - Click "Create Function"
+   - Name: `openrouter-models` (etc.)
+   - Copy code from `backend/supabase/functions/[function-name]/index.ts`
+   - Paste and deploy
 
-## 🤖 الخيار 2: النشر التلقائي (عبر GitHub Actions)
-
-### الخطوة 1: إضافة Secret
-
-1. اذهب إلى: `https://github.com/you112ef/opendev-agent/settings/secrets/actions`
-2. اضغط: "New repository secret"
-3. الاسم: `RAILWAY_TOKEN`
-4. القيمة: `fa1742f2-4136-4d07-b872-54b36c23c3c7`
-5. اضغط: "Add secret" ✅
-
-### الخطوة 2: تشغيل Workflow
-
-1. اذهب إلى: GitHub Actions
-2. اختر: "Deploy to Railway"
-3. اضغط: "Run workflow" ✅
-4. انتظر البناء والنشر
-
----
-
-## 📊 معلومات النشر:
-
-| المعلومة | القيمة |
-|---------|--------|
-| **Platform** | Railway.app |
-| **Repository** | you112ef/opendev-agent |
-| **Token** | `fa1742f2-4136-4d07-b872-54b36c23c3c7` |
-| **Frontend Service** | opendev-agent-frontend |
-| **Backend Service** | opendev-agent-backend |
-| **Build Time** | 3-5 دقائق |
-| **Status** | جاهز للنشر ✅ |
-
----
-
-## 🔐 معلومات الأمان:
-
-⚠️ **تنبيه:** تأكد من حذف الـ Token بعد الاستخدام!
-
+**Option B: Via CLI**
 ```bash
-# بعد النشر الناجح:
-# احذف Token من:
-# 1. GitHub Secrets
-# 2. ملفات التعليمات
-# 3. السجلات
+cd backend/supabase
+export SUPABASE_ACCESS_TOKEN="your-access-token"
+npx supabase link --project-ref e2fc6787340d1be587c2eb26a10146db79f2efdc
+./deploy-all.sh
 ```
 
----
+### Environment Variables
+**Status:** ⏳ Pending
 
-## 📞 عند اكتمال النشر:
+**Set in Dashboard:**
+- Go to: https://supabase.com/dashboard/project/sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc/settings/functions
 
-### ستحصل على:
-- ✅ رابط Frontend: `https://<domain>.up.railway.app`
-- ✅ رابط Backend API: `https://<api-domain>.up.railway.app`
-- ✅ Dashboard: `https://railway.app/dashboard`
+**Required Variables:**
+- `SUPABASE_URL`: `https://sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc.supabase.co`
+- `SUPABASE_SERVICE_ROLE_KEY`: (from API Settings)
+- `SUPABASE_ANON_KEY`: (from API Settings)
+- `OPENROUTER_API_URL`: `https://openrouter.ai/api/v1`
 
-### المتغيرات البيئية المطلوبة:
-```
-OPENROUTER_API_KEY=<your_key>
-FRONTEND_URL=<frontend_domain>
-BACKEND_URL=<backend_domain>
-```
+## 📋 Quick Links
 
----
+- **Vercel Dashboard:** https://vercel.com/bades-projects-40452333/frontend
+- **Supabase Dashboard:** https://supabase.com/dashboard/project/sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc
+- **SQL Editor:** https://supabase.com/dashboard/project/sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc/sql/new
+- **Edge Functions:** https://supabase.com/dashboard/project/sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc/functions
+- **API Settings:** https://supabase.com/dashboard/project/sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc/settings/api
 
-## 🎉 التالي:
+## 🎯 Next Steps
 
-1. ✅ اختر أحد الخيارات أعلاه
-2. ⏳ انتظر 5-10 دقائق
-3. 🌍 تطبيقك مباشر على الإنترنت!
-4. ⚙️ أضف متغيرات البيئة
-5. 🔑 احذف الـ Token للأمان
-
----
-
-**Created:** 2025-11-02
-**Status:** 🟢 Ready to Deploy
-**Next Action:** اختر خيار النشر وابدأ!
-
+1. ✅ Frontend deployed (Complete)
+2. ⏳ Apply database migrations (Manual via Dashboard)
+3. ⏳ Deploy Edge Functions (Manual via Dashboard or CLI)
+4. ⏳ Set environment variables (Manual via Dashboard)
