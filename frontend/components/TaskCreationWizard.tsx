@@ -137,12 +137,13 @@ export default function TaskCreationWizard() {
                     }}
                     className="w-full px-4 py-3 bg-black text-white border border-neutral-700 rounded-lg focus:outline-none focus:border-neutral-600 transition-colors cursor-pointer"
                   >
-                  {languages.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {lang}
-                    </option>
-                  ))}
-                </select>
+                    {languages.map((lang) => (
+                      <option key={lang} value={lang}>
+                        {lang}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </label>
 
               <label className="block group">
@@ -158,14 +159,15 @@ export default function TaskCreationWizard() {
                     }
                     className="w-full px-5 py-4 glass text-white border border-white/10 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 transition-all duration-200 appearance-none cursor-pointer"
                   >
-                  {frameworks[formData.language as keyof typeof frameworks].map(
-                    (fw) => (
-                      <option key={fw} value={fw}>
-                        {fw}
-                      </option>
-                    )
-                  )}
-                </select>
+                    {frameworks[formData.language as keyof typeof frameworks].map(
+                      (fw) => (
+                        <option key={fw} value={fw}>
+                          {fw}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </div>
               </label>
             </div>
             
@@ -196,9 +198,10 @@ export default function TaskCreationWizard() {
                     }`}
                   >
                     <span className="relative z-10">
-                    {level === 'low' && 'منخفض'}
-                    {level === 'medium' && 'متوسط'}
-                    {level === 'high' && 'عالي'}
+                      {level === 'low' && 'منخفض'}
+                      {level === 'medium' && 'متوسط'}
+                      {level === 'high' && 'عالي'}
+                    </span>
                   </button>
                 ))}
               </div>
