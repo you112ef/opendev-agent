@@ -6,6 +6,9 @@ import ApiKeyInputForm from '@/components/ApiKeyInputForm'
 import TaskCreationWizard from '@/components/TaskCreationWizard'
 import AgentStatusDashboard from '@/components/AgentStatusDashboard'
 import RealTimeLogViewer from '@/components/RealTimeLogViewer'
+import CodePreview from '@/components/CodePreview'
+import ChatAssistant from '@/components/ChatAssistant'
+import PRDashboard from '@/components/PRDashboard'
 import { supabase } from '@/lib/supabaseClient'
 import { getUserApiKey } from '@/lib/supabaseClient'
 
@@ -120,6 +123,13 @@ export default function Home() {
                 {selectedTask ? (
                   <div className="space-y-4">
                     <AgentStatusDashboard task={selectedTask} />
+                    
+                    {/* Code Preview and Chat Side by Side */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <CodePreview runId={selectedTask.id} language={selectedTask.language} />
+                      <ChatAssistant runId={selectedTask.id} />
+                    </div>
+                    
                     <RealTimeLogViewer taskId={selectedTask.id} />
                   </div>
                 ) : (
@@ -136,6 +146,9 @@ export default function Home() {
                     </p>
                   </div>
                 )}
+
+                {/* PR Dashboard */}
+                <PRDashboard />
 
                 {/* Tasks List */}
                 {tasks.length > 0 && (

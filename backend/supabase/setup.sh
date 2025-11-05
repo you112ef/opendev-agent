@@ -41,6 +41,12 @@ supabase functions deploy validate-api-key
 echo "  → Deploying run-handler..."
 supabase functions deploy run-handler
 
+echo "  → Deploying github-pr..."
+supabase functions deploy github-pr
+
+echo "  → Deploying sandbox-execute..."
+supabase functions deploy sandbox-execute
+
 echo "✅ Setup complete!"
 echo ""
 echo "Next steps:"

@@ -43,6 +43,8 @@
    supabase functions deploy openrouter-proxy
    supabase functions deploy validate-api-key
    supabase functions deploy run-handler
+   supabase functions deploy github-pr
+   supabase functions deploy sandbox-execute
    ```
 
 ## Environment Variables

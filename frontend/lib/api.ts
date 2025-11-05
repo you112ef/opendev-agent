@@ -100,32 +100,58 @@ export const getAllRuns = async (): Promise<any[]> => {
   }
 }
 
-export const callOpenRouter = async (
-  model: string,
-  messages: any[],
-  stream: boolean = false
-): Promise<any> => {
+export const createGitHubPR = async (
+  runId: string,
+  repoUrl: string,
+  branchName: string,
+  title: string,
+  description: string,
+  files?: Record<string, string>
+) => {
   try {
     const headers = await getAuthHeaders()
-    const response = await fetch(`${SUPABASE_FUNCTIONS_URL}/openrouter-proxy`, {
+    const response = await fetch(`${SUPABASE_FUNCTIONS_URL}/github-pr`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        model,
-        messages,
-        stream,
+        run_id: runId,
+        repo_url: repoUrl,
+        branch_name: branchName,
+        title,
+        description,
+        files,
       }),
     })
-
-    if (stream) {
-      // Handle streaming response
-      return response.body
-    }
-
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('OpenRouter API call failed:', error)
+    console.error('Failed to create GitHub PR:', error)
+    throw error
+  }
+}
+
+export const executeSandbox = async (
+  runId: string,
+  language: string,
+  code: string,
+  testCode?: string
+) => {
+  try {
+    const headers = await getAuthHeaders()
+    const response = await fetch(`${SUPABASE_FUNCTIONS_URL}/sandbox-execute`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        run_id: runId,
+        language,
+        code,
+        test_code: testCode,
+      }),
+    })
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Sandbox execution failed:', error)
     throw error
   }
 }
