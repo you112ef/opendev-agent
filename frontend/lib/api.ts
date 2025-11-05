@@ -155,3 +155,27 @@ export const executeSandbox = async (
     throw error
   }
 }
+
+export const callOpenRouter = async (
+  model: string,
+  messages: any[],
+  stream: boolean = false
+): Promise<any> => {
+  try {
+    const headers = await getAuthHeaders()
+    const response = await fetch(`${SUPABASE_FUNCTIONS_URL}/openrouter-proxy`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model,
+        messages,
+        stream,
+      }),
+    })
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('OpenRouter call failed:', error)
+    throw error
+  }
+}
