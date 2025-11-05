@@ -52,6 +52,7 @@ export default function TaskCreationWizard() {
       addTask({
         id: taskId,
         ...formData,
+        complexity: formData.complexity as 'low' | 'medium' | 'high',
         status: 'running',
         createdAt: new Date(),
         agents: [
