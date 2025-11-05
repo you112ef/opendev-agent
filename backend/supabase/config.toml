@@ -1,0 +1,16 @@
+# Supabase Project Configuration
+# Project Reference: sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc
+
+[project]
+id = "sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc"
+
+[api]
+# Auto-configured via Supabase CLI
+# Run: supabase link --project-ref sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc
+
+[functions]
+# Edge Functions will be deployed to this project
+openrouter-models = "openrouter-models"
+openrouter-proxy = "openrouter-proxy"
+validate-api-key = "validate-api-key"
+run-handler = "run-handler"

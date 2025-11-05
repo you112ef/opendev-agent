@@ -3,9 +3,10 @@
 
 ## Prerequisites
 
-1. Create a Supabase account at https://supabase.com
-2. Create a new project
-3. Get your project URL and API keys from Project Settings > API
+1. Supabase project reference: `sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc`
+2. Install Supabase CLI: `npm install -g supabase`
+3. Login: `supabase login`
+4. Link project: `supabase link --project-ref sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc`
 
 ## Database Setup
 
