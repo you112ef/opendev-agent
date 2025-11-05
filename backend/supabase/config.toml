@@ -2,7 +2,7 @@
 # Project Reference: sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc
 
 [project]
-id = "sbp_e2fc6787340d1be587c2eb26a10146db79f2efdc"
+id = "e2fc6787340d1be587c2eb26a10146db79f2efdc"
 
 [api]
 # Auto-configured via Supabase CLI
