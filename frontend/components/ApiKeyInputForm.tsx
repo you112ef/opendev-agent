@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { validateApiKey } from '@/lib/api'
+import { saveUserApiKey } from '@/lib/supabaseClient'
 
 interface ApiKeyInputFormProps {
   onSuccess?: () => void
@@ -28,6 +29,8 @@ export default function ApiKeyInputForm({ onSuccess }: ApiKeyInputFormProps) {
 
       const isValid = await validateApiKey(apiKey)
       if (isValid) {
+        // Save to Supabase
+        await saveUserApiKey(apiKey)
         storeApiKey(apiKey)
         addNotification('success', 'تم التحقق من مفتاح API بنجاح')
         setApiKey('')

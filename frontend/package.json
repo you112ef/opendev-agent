@@ -20,7 +20,9 @@
     "framer-motion": "^10.16.16",
     "react-hot-toast": "^2.4.1",
     "clsx": "^2.0.0",
-    "date-fns": "^2.30.0"
+    "date-fns": "^2.30.0",
+    "@supabase/supabase-js": "^2.38.4",
+    "@supabase/ssr": "^0.0.10"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

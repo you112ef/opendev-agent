@@ -23,6 +23,9 @@ interface AppStore {
   setApiKey: (key: string) => void
   clearApiKey: () => void
   
+  selectedModel: string | null
+  setSelectedModel: (model: string) => void
+  
   currentTask: Task | null
   setCurrentTask: (task: Task) => void
   clearCurrentTask: () => void
@@ -45,6 +48,9 @@ export const useAppStore = create<AppStore>((set) => ({
   apiKey: null,
   setApiKey: (key) => set({ apiKey: key }),
   clearApiKey: () => set({ apiKey: null }),
+  
+  selectedModel: null,
+  setSelectedModel: (model) => set({ selectedModel: model }),
   
   currentTask: null,
   setCurrentTask: (task) => set({ currentTask: task }),
