@@ -15,28 +15,73 @@ export default function CodePreview({ runId, language }: CodePreviewProps) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Fetch code from run logs
+    // Fetch code from run's generated_code field
     const fetchCode = async () => {
       const { data, error } = await supabase
-        .from('run_logs')
-        .select('*')
-        .eq('run_id', runId)
-        .eq('log_level', 'info')
-        .order('created_at', { ascending: false })
-        .limit(10)
+        .from('runs')
+        .select('generated_code')
+        .eq('id', runId)
+        .single()
 
-      if (!error && data) {
-        // Extract code from logs (simplified - in production, store code separately)
-        const codeLogs = data
-          .filter(log => log.message.includes('```'))
-          .map(log => log.message)
-          .join('\n')
-        setCode(codeLogs || '// No code generated yet')
+      if (!error && data?.generated_code) {
+        // Convert generated_code object to formatted code string
+        const codeObj = data.generated_code as Record<string, string>
+        const codeFiles = Object.entries(codeObj)
+          .map(([filename, code]) => `// ${filename}\n${code}`)
+          .join('\n\n')
+        setCode(codeFiles || '// No code generated yet')
+      } else {
+        // Fallback: try to get from logs
+        const { data: logData } = await supabase
+          .from('run_logs')
+          .select('metadata')
+          .eq('run_id', runId)
+          .eq('agent_name', 'Coder')
+          .not('metadata', 'is', null)
+          .order('created_at', { ascending: false })
+          .limit(1)
+
+        if (logData && logData[0]?.metadata?.code_blocks) {
+          const blocks = logData[0].metadata.code_blocks as Array<{language: string; code: string}>
+          const codeStr = blocks
+            .map((block) => `\`\`\`${block.language}\n${block.code}\n\`\`\``)
+            .join('\n\n')
+          setCode(codeStr)
+        } else {
+          setCode('// Code generation in progress...')
+        }
       }
       setIsLoading(false)
     }
 
     fetchCode()
+
+    // Subscribe to updates
+    const channel = supabase
+      .channel(`run_code:${runId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'runs',
+          filter: `id=eq.${runId}`,
+        },
+        (payload) => {
+          if (payload.new.generated_code) {
+            const codeObj = payload.new.generated_code as Record<string, string>
+            const codeFiles = Object.entries(codeObj)
+              .map(([filename, code]) => `// ${filename}\n${code}`)
+              .join('\n\n')
+            setCode(codeFiles)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [runId])
 
   const getLanguageForEditor = (lang: string) => {

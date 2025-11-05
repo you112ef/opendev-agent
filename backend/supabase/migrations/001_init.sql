@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS runs (
   github_pr_url TEXT,
   github_pr_number INTEGER,
   error_message TEXT,
+  generated_code JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ

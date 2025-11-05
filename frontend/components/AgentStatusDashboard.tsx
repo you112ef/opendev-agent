@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useAppStore } from '@/lib/store'
+import CreatePRButton from './CreatePRButton'
 
 interface AgentStatus {
   id: string
@@ -22,6 +23,7 @@ interface Task {
   status: string
   github_pr_url?: string
   github_pr_number?: number
+  generated_code?: Record<string, string>
 }
 
 interface AgentStatusDashboardProps {
@@ -131,6 +133,9 @@ export default function AgentStatusDashboard({ task }: AgentStatusDashboardProps
             </svg>
             PR #{task.github_pr_number}
           </a>
+        )}
+        {!task.github_pr_url && task.status === 'completed' && task.generated_code && (
+          <CreatePRButton runId={task.id} generatedCode={task.generated_code} />
         )}
       </div>
 

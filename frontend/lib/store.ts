@@ -16,6 +16,9 @@ export interface Task {
   status: 'pending' | 'running' | 'completed' | 'error'
   createdAt: Date
   agents: AgentStatus[]
+  github_pr_url?: string
+  github_pr_number?: number
+  generated_code?: Record<string, string>
 }
 
 interface AppStore {

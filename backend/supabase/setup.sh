@@ -41,6 +41,9 @@ supabase functions deploy validate-api-key
 echo "  → Deploying run-handler..."
 supabase functions deploy run-handler
 
+echo "  → Deploying task-executor..."
+supabase functions deploy task-executor
+
 echo "  → Deploying github-pr..."
 supabase functions deploy github-pr
 

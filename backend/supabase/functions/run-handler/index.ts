@@ -79,8 +79,27 @@ serve(async (req) => {
         message: `🚀 Task started: ${description.substring(0, 100)}...`,
       })
 
-      // Trigger background job (this would be handled by Supabase cron or pg_cron)
-      // For now, we'll return the run and let the client poll or use realtime
+      // Trigger task execution (call task-executor function)
+      // This will be called asynchronously
+      try {
+        const functionsUrl = Deno.env.get('SUPABASE_URL')?.replace(/\/$/, '') || ''
+        const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+        
+        // Call task-executor function asynchronously
+        fetch(`${functionsUrl}/functions/v1/task-executor`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${serviceRoleKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ run_id: run.id }),
+        }).catch((err) => {
+          console.error('Failed to trigger task executor:', err)
+        })
+      } catch (triggerError) {
+        console.error('Error triggering task executor:', triggerError)
+        // Don't fail the request, just log the error
+      }
 
       return new Response(
         JSON.stringify({ run }),
